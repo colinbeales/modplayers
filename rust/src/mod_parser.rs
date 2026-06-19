@@ -50,7 +50,13 @@ pub struct ModFile {
 
 pub fn parse_mod(filename: &str) -> Result<ModFile, Box<dyn std::error::Error>> {
     let data = fs::read(filename)?;
+    parse_mod_bytes(&data)
+}
 
+pub fn parse_mod_bytes(data: &[u8]) -> Result<ModFile, Box<dyn std::error::Error>> {
+    if data.len() < 1084 {
+        return Err("File too short".into());
+    }
     let title = decode_latin1_trimmed(&data[0..20.min(data.len())]);
 
     // Parse 31 sample headers (offset 20, 30 bytes each)
@@ -78,10 +84,6 @@ pub fn parse_mod(filename: &str) -> Result<ModFile, Box<dyn std::error::Error>> 
             data: vec![],
             data_float: vec![],
         }));
-    }
-
-    if data.len() < 952 {
-        return Err("File too short".into());
     }
 
     let song_length = data[950] as usize;
