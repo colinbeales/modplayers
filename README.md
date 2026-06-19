@@ -1,6 +1,6 @@
 # MOD Player
 
-A command-line Amiga ProTracker MOD file player implemented in three languages: Python, Go, and Rust.
+A command-line Amiga ProTracker MOD file player implemented in three languages: Python, Go, and Rust, plus a browser UI for visual playback of MOD and WAV files.
 
 ## What is a MOD file?
 
@@ -15,6 +15,14 @@ The format was popularised by Karsten Obarski's *Ultimate Soundtracker* (1987) a
 
 ```
 modPlayer/
+├── web/             # Browser ProTracker-style player and visualizer
+│   ├── src/
+│   │   ├── audio.ts
+│   │   ├── main.ts
+│   │   ├── mod.ts
+│   │   └── styles.css
+│   ├── index.html
+│   └── package.json
 ├── python/          # Reference implementation
 │   ├── main.py
 │   ├── mod_parser.py
@@ -35,6 +43,25 @@ modPlayer/
 ```
 
 ## Running
+
+### Browser UI
+
+Requires Node.js 20+:
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Open the local Vite URL and load or drag in a `.mod` or `.wav` file. The browser UI recreates the ProTracker main-screen playback dashboard with transport controls, song/pattern/row/timing readouts, quadratscope-style channel scopes, sample metadata, channel mute/solo controls, and a scrolling pattern grid for MOD files.
+
+To create a production build:
+
+```bash
+cd web
+npm run build
+```
 
 ### Python
 
@@ -93,6 +120,7 @@ All three implementations follow the original **Amiga CIA-timer tick model**:
 | Python   | `sounddevice` | Callback-based; OS pulls `render()` from a background thread |
 | Go       | `ebitengine/oto` | `ModReader` implements `io.Reader`; oto pulls bytes internally via CoreAudio / ALSA / WASAPI |
 | Rust     | `cpal`        | Callback-based stream; OS calls the closure, which locks the player and calls `render()` |
+| Browser  | Web Audio     | ScriptProcessor pulls rendered MOD frames from the TypeScript player; WAV files use native `decodeAudioData()` |
 
 ### Mixing and output
 
