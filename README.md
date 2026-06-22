@@ -15,6 +15,8 @@ The format was popularised by Karsten Obarski's *Ultimate Soundtracker* (1987) a
 
 ```
 modPlayer/
+├── docs/
+│   └── webui.png      # Browser UI screenshot
 ├── web/             # Browser ProTracker-style player and visualizer
 │   ├── src/
 │   │   ├── audio.ts
@@ -55,6 +57,8 @@ npm run dev
 ```
 
 Open the local Vite URL and load or drag in a `.mod` or `.wav` file. The browser UI recreates the ProTracker main-screen playback dashboard with transport controls, song/pattern/row/timing readouts, quadratscope-style channel scopes, sample metadata, channel mute/solo controls, and a scrolling pattern grid for MOD files.
+
+![MOD Player Web UI](docs/webui.png)
 
 To create a production build:
 
