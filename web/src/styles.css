@@ -17,7 +17,10 @@
 
 body {
   margin: 0;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  place-items: start center;
   background: #1b1b1b;
   color: var(--pt-text);
 }
@@ -41,9 +44,13 @@ button, input {
 
 .protracker-shell {
   width: min(1400px, 100vw);
-  margin: 0 auto;
+  height: 100vh;
   padding: 8px;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  gap: 8px;
   background: var(--pt-bg);
+  overflow: hidden;
 }
 
 .pt-bevel,
@@ -67,7 +74,8 @@ button, input {
 
 .pt-field {
   display: grid;
-  grid-template-columns: 1fr 92px;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 12px;
   align-items: center;
   min-height: 44px;
   padding: 4px 8px;
@@ -79,12 +87,52 @@ button, input {
 .pt-namebar span {
   color: var(--pt-light);
   text-shadow: 2px 2px 0 var(--pt-dark);
+  white-space: nowrap;
 }
 
 .pt-field strong {
   color: #000;
+  justify-self: end;
   text-align: right;
   letter-spacing: 3px;
+  white-space: nowrap;
+}
+
+.status-field {
+  grid-template-columns: max-content minmax(0, 1fr);
+}
+
+.status-indicator {
+  justify-self: end;
+  width: 48px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #666;
+  transition: color 0.1s;
+  cursor: default;
+}
+
+.status-indicator.playing {
+  color: var(--pt-green);
+  text-shadow: 0 0 8px var(--pt-green);
+}
+
+.status-indicator.paused {
+  color: var(--pt-yellow);
+  text-shadow: 0 0 8px var(--pt-yellow);
+}
+
+.status-indicator.stopped {
+  color: var(--pt-red);
+  text-shadow: 0 0 8px var(--pt-red);
+}
+
+.status-indicator.idle {
+  color: #666;
 }
 
 .transport {
@@ -120,7 +168,6 @@ button, input {
 }
 
 .scope-panel {
-  margin-top: 8px;
   background: var(--pt-panel);
 }
 
@@ -150,12 +197,12 @@ button, input {
 .name-bars {
   display: grid;
   gap: 4px;
-  margin-top: 8px;
 }
 
 .pt-namebar {
   display: grid;
-  grid-template-columns: 190px 1fr;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 12px;
   align-items: center;
   min-height: 48px;
   padding: 4px 12px;
@@ -174,13 +221,15 @@ button, input {
   display: grid;
   grid-template-columns: 280px 1fr 240px;
   gap: 8px;
-  margin-top: 8px;
+  min-height: 0;
 }
 
 .sample-panel,
 .pattern-panel,
 .channel-panel {
-  min-height: 520px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   background: var(--pt-panel);
   overflow: hidden;
 }
@@ -193,7 +242,8 @@ h2 {
 }
 
 .sample-list {
-  max-height: 480px;
+  flex: 1;
+  min-height: 0;
   overflow: auto;
   padding: 6px;
 }
@@ -236,10 +286,84 @@ h2 {
 }
 
 .pattern-grid {
-  height: 480px;
-  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
   padding: 8px;
   background: #020202;
+}
+
+.waveform-panel {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--pt-panel);
+  overflow: hidden;
+  grid-column: 2 / 4;
+}
+
+.waveform-header {
+  display: flex;
+  padding: 8px;
+  background: var(--pt-panel);
+  border-bottom: 2px solid #777;
+}
+
+.back-btn {
+  min-height: 36px;
+  font-size: 0.9rem;
+  padding: 0 12px;
+}
+
+.waveform-canvas {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  background: #1a1a1a;
+}
+
+.waveform-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  background: var(--pt-panel);
+  border-top: 2px solid #777;
+}
+
+.control-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 50px;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.control-row label {
+  color: var(--pt-light);
+  text-shadow: 1px 1px 0 var(--pt-dark);
+}
+
+.control-row input {
+  width: 100%;
+}
+
+.control-row span {
+  text-align: right;
+  color: #000;
+  font-weight: bold;
+}
+
+.sample-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.sample-btn {
+  min-height: 36px;
+  font-size: 0.9rem;
+  padding: 0;
 }
 
 .pattern-row {
@@ -297,11 +421,14 @@ h2 {
   display: grid;
   gap: 8px;
   padding: 8px;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
 }
 
 .channel-strip {
   display: grid;
-  grid-template-columns: 44px 36px 36px 1fr;
+  grid-template-columns: 44px 36px 36px minmax(0, 1fr);
   gap: 8px;
   align-items: center;
   min-height: 72px;
@@ -343,10 +470,18 @@ h2 {
 .channel-text {
   display: grid;
   gap: 4px;
+  min-width: 0;
+  font-family: "Monaco", "Menlo", monospace;
 }
 
 .channel-text strong {
   font-size: 1.4rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.channel-text span {
+  white-space: nowrap;
 }
 
 body[data-transport="playing"] .protracker-shell {
