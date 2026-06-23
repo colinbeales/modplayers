@@ -67,6 +67,18 @@ cd web
 npm run build
 ```
 
+### Deploying the browser UI to GitHub Pages
+
+This repository now includes `.github/workflows/deploy-pages.yml`, which builds `web/` and deploys `web/dist` to GitHub Pages on every push to `main`.
+
+1. In GitHub, open **Settings → Pages**.
+2. Set **Source** to **GitHub Actions**.
+3. Push to `main`.
+
+The app will be published at:
+
+`https://colinbeales.github.io/modplayers/`
+
 ### Python
 
 Requires Python 3.9+ and the dependencies in `requirements.txt`:
