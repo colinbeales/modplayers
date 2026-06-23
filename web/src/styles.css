@@ -191,7 +191,13 @@ button, input {
   height: 96px;
   image-rendering: pixelated;
   background: #000;
-  border: 2px inset #777;
+  border: 3px solid var(--pt-yellow);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.scope-canvas.muted {
+  border-color: transparent;
 }
 
 .name-bars {
@@ -219,7 +225,7 @@ button, input {
 
 .info-grid {
   display: grid;
-  grid-template-columns: 280px 1fr 240px;
+  grid-template-columns: 280px 1fr 190px;
   gap: 8px;
   min-height: 0;
 }
@@ -428,7 +434,7 @@ h2 {
 
 .channel-strip {
   display: grid;
-  grid-template-columns: 44px 36px 36px minmax(0, 1fr);
+  grid-template-columns: 44px 36px minmax(0, 1fr);
   gap: 8px;
   align-items: center;
   min-height: 72px;
@@ -437,20 +443,19 @@ h2 {
   border: 2px inset #888;
 }
 
-.lamp,
-.solo {
+.lamp {
   min-height: 36px;
   border: 2px solid #555;
-  background: #333;
-  color: #999;
+  background: var(--pt-green);
+  color: #fff;
   cursor: pointer;
+  box-shadow: 0 0 8px var(--pt-green);
 }
 
-.lamp.on,
-.solo.on {
+.lamp.off {
   background: var(--pt-red);
   color: #fff;
-  box-shadow: 0 0 10px var(--pt-red);
+  box-shadow: 0 0 8px var(--pt-red);
 }
 
 .meter {

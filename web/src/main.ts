@@ -124,8 +124,28 @@ for (let i = 0; i < 4; i++) {
   scope.height = 96;
   scope.className = 'scope-canvas';
   scope.dataset.channel = `${i + 1}`;
+  scope.addEventListener('click', () => {
+    const state = audio.state();
+    const ch = state.channels[i];
+    audio.setMute(i, !ch?.muted);
+  });
   els.scopes.append(scope);
   scopeCanvases.push(scope);
+}
+
+for (let i = 0; i < 4; i++) {
+  const strip = document.createElement('div');
+  strip.className = 'channel-strip';
+  strip.dataset.channel = String(i);
+  strip.innerHTML = `
+    <button data-mute="${i}" class="lamp on">${i + 1}</button>
+    <div class="meter"><span></span></div>
+    <div class="channel-text"><strong>---</strong><span>-- 000</span></div>
+  `;
+  strip.querySelector<HTMLButtonElement>('[data-mute]')!.addEventListener('click', () => {
+    audio.setMute(i, !audio.state().channels[i]?.muted);
+  });
+  els.channels.append(strip);
 }
 
 els.file.addEventListener('change', async () => {
@@ -294,27 +314,17 @@ function drawWaveform(sample: { dataFloat: Float32Array; length: number }): void
 }
 
 function renderChannels(state: PlayerState): void {
-  els.channels.innerHTML = state.channels.slice(0, 4).map((ch) => `
-    <div class="channel-strip">
-      <button data-mute="${ch.index}" class="lamp ${ch.muted ? '' : 'on'}">${ch.index + 1}</button>
-      <button data-solo="${ch.index}" class="solo ${ch.solo ? 'on' : ''}">S</button>
-      <div class="meter"><span style="height:${Math.round(ch.peak * 100)}%"></span></div>
-      <div class="channel-text">
-        <strong>${noteName(ch.effectivePeriod)}</strong>
-        <span>${ch.sampleNum ? hex(ch.sampleNum, 2) : '--'} ${hex(ch.effectCmd, 1)}${hex(ch.effectData, 2)}</span>
-      </div>
-    </div>
-  `).join('');
-
-  els.channels.querySelectorAll<HTMLButtonElement>('[data-mute]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const index = Number(button.dataset.mute);
-      const current = state.channels[index];
-      audio.setMute(index, !current?.muted);
-    });
-  });
-  els.channels.querySelectorAll<HTMLButtonElement>('[data-solo]').forEach((button) => {
-    button.addEventListener('click', () => audio.toggleSolo(Number(button.dataset.solo)));
+  state.channels.slice(0, 4).forEach((ch) => {
+    const strip = els.channels.querySelector<HTMLElement>(`[data-channel="${ch.index}"]`);
+    if (!strip) return;
+    const lamp = strip.querySelector<HTMLButtonElement>('[data-mute]');
+    if (lamp) lamp.className = `lamp ${ch.muted ? 'off' : 'on'}`;
+    const meter = strip.querySelector<HTMLElement>('.meter span');
+    if (meter) meter.style.height = `${Math.round(ch.peak * 100)}%`;
+    const strong = strip.querySelector<HTMLElement>('.channel-text strong');
+    if (strong) strong.textContent = noteName(ch.effectivePeriod);
+    const span = strip.querySelector<HTMLElement>('.channel-text span');
+    if (span) span.textContent = `${ch.sampleNum ? hex(ch.sampleNum, 2) : '--'} ${hex(ch.effectCmd, 1)}${hex(ch.effectData, 2)}`;
   });
 }
 
@@ -324,6 +334,7 @@ function drawScopes(state: PlayerState): void {
     const ctx = canvas.getContext('2d');
     if (!ctx) continue;
     const channel = state.channels[i] ?? state.channels[0];
+    canvas.classList.toggle('muted', !!channel?.muted);
     ctx.fillStyle = '#050505';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = channel?.muted ? '#24552e' : '#f4f000';
